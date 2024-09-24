@@ -13,7 +13,7 @@ import unittest
 import pytest
 from pydantic import ValidationError
 
-from tags_update_request import TagUpdateRequest
+from models.tags import Tag
 
 
 class TagsModelTest(unittest.TestCase):
@@ -26,20 +26,20 @@ class TagsModelTest(unittest.TestCase):
             "range_low": 0.2,
             "range_high": 0.8,
         }
-        tag = TagUpdateRequest(
+        tag = Tag(
             id=1,
             name="Valid Tag",
             description="This is a valid tag",
             range_low=0.2,
             range_high=0.8,
         )
-        from_json = TagUpdateRequest.model_validate(json)
+        from_json = Tag.model_validate(json)
         self.assertEqual(tag, from_json)
 
     def test_invalid_empty(self):
         json = {}
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
 
     def test_invalid_extra_value(self):
         json = {
@@ -48,10 +48,10 @@ class TagsModelTest(unittest.TestCase):
             "description": "This is a valid tag",
             "range_low": 0.2,
             "range_high": 0.8,
-            "extra": "extra",
+            "extra": 1,
         }
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
 
     def test_invalid_id_missing(self):
         json = {
@@ -60,91 +60,89 @@ class TagsModelTest(unittest.TestCase):
             "range_low": 0.2,
             "range_high": 0.8,
         }
-
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
-
-    def test_invalid_id_just(self):
-        json = {"id": 1}
-
-        with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
 
     def test_invalid_id_string(self):
-        json = {"id": "TEST"}
-
+        json = {
+            "id": "TEST_STRING",
+            "name": "Valid Tag",
+            "description": "This is a valid tag",
+            "range_low": 0.2,
+            "range_high": 0.8,
+        }
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
+
+    def test_invalid_name_missing(self):
+        json = {
+            "id": 1,
+            "description": "This is a valid tag",
+            "range_low": 0.2,
+            "range_high": 0.8,
+        }
+        with pytest.raises(ValidationError):
+            _ = Tag.model_validate(json)
+
+    def test_invalid_description_missing(self):
+        json = {
+            "id": 1,
+            "name": "Valid Tag",
+            "range_low": 0.2,
+            "range_high": 0.8,
+        }
+        with pytest.raises(ValidationError):
+            _ = Tag.model_validate(json)
+
+    def test_invalid_range_low_missing(self):
+        json = {
+            "id": 1,
+            "name": "Valid Tag",
+            "description": "This is a valid tag",
+            "range_high": 0.8,
+        }
+        with pytest.raises(ValidationError):
+            _ = Tag.model_validate(json)
 
     def test_invalid_range_low_string(self):
         json = {
             "id": 1,
+            "name": "Valid Tag",
+            "description": "This is a valid tag",
             "range_low": "hello",
+            "range_high": 0.8,
         }
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
+
+    def test_invalid_range_high_missing(self):
+        json = {
+            "id": 1,
+            "name": "Valid Tag",
+            "description": "This is a valid tag",
+            "range_low": 0.2,
+        }
+        with pytest.raises(ValidationError):
+            _ = Tag.model_validate(json)
 
     def test_invalid_range_high_string(self):
         json = {
             "id": 1,
+            "name": "Valid Tag",
+            "description": "This is a valid tag",
+            "range_low": 0.2,
             "range_high": "hello",
         }
         with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
+            _ = Tag.model_validate(json)
 
-    def test_invalid_range_low_higher_than_range_high(self):
-        json = {
-            "id": 1,
-            "range_low": 1,
-            "range_high": 0.1,
-        }
-        with pytest.raises(ValidationError):
-            _ = TagUpdateRequest.model_validate(json)
-
-    def test_name(self):
+    def test_invalid_range_low_higher_than_range_hi(self):
         json = {
             "id": 1,
             "name": "Valid Tag",
-        }
-        tag = TagUpdateRequest(
-            id=1,
-            name="Valid Tag",
-        )
-        from_json = TagUpdateRequest.model_validate(json)
-        self.assertEqual(tag, from_json)
-
-    def test_description(self):
-        json = {
-            "id": 1,
             "description": "This is a valid tag",
+            "range_low": 0.8,
+            "range_high": 0.2,
         }
-        tag = TagUpdateRequest(
-            id=1,
-            description="This is a valid tag",
-        )
-        from_json = TagUpdateRequest.model_validate(json)
-        self.assertEqual(tag, from_json)
-
-    def test_range_low(self):
-        json = {
-            "id": 1,
-            "range_low": 0.2,
-        }
-        tag = TagUpdateRequest(
-            id=1,
-            range_low=0.2,
-        )
-        from_json = TagUpdateRequest.model_validate(json)
-        self.assertEqual(tag, from_json)
-
-    def test_range_high(self):
-        json = {
-            "id": 1,
-            "range_high": 0.8,
-        }
-        tag = TagUpdateRequest(
-            id=1,
-            range_high=0.8,
-        )
-        from_json = TagUpdateRequest.model_validate(json)
-        self.assertEqual(tag, from_json)
+        with pytest.raises(ValidationError):
+            _ = Tag.model_validate(json)

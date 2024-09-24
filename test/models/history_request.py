@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from history_request import HistoryRequest
+from models.history_request import HistoryRequest
 
 
 class HistoryRequestModelTest(unittest.TestCase):
