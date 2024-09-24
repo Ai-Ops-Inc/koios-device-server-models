@@ -12,5 +12,5 @@ classifiers = [
 ]
 
 dependencies = [
-    "pydantic==2.8.2",
+    "pydantic==2.9.2",
 ]
