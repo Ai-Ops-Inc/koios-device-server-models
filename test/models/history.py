@@ -14,7 +14,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from history import History
+from models.history import History
 
 
 class HistoryModelTest(unittest.TestCase):
