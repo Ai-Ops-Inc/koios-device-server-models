@@ -1,5 +1,5 @@
 [project]
-name = "KoiosDeviceModels"
+name = "KoiosDeviceServerModels"
 version = "0.0.1"
 authors = [{ name = "Tho Ha", email = "thodha@aiop.com" }]
 description = "Models for usage with Koios Device Server"
