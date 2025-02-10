@@ -34,6 +34,15 @@ class TagError(Exception):
     """
 
 
+class TagBadRequestError(TagError):
+    """Exception raised when there is a bad request."""
+
+    def __init__(self, tag_name, message="Request is bad"):
+        self.tag_name = tag_name
+        self.message = f"{message}: {tag_name}"
+        super().__init__(self.message)
+
+
 class TagAlreadyExistError(TagError):
     """Exception raised when attempting to create a tag that already exists."""
 
