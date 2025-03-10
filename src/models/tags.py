@@ -7,7 +7,6 @@
 # www.ai-op.com
 # www.ai-ops.document360.io/docs/end-user-license-agreement
 ####################################################################################################
-from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
