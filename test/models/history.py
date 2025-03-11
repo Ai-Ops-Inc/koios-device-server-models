@@ -9,77 +9,130 @@
 ####################################################################################################
 
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from pydantic import ValidationError
 
-from models.history import History
+from models.history import History, Value
 
 
 class HistoryModelTest(unittest.TestCase):
 
-    def test_valid(self):
-        current_date = datetime.now()
+    def test_valid_single(self):
+        timestamp = datetime.now()
         json = {
             "id": 1,
-            "value": 1.0,
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
         }
-        history = History(id=1, value=1.0, timestamp=current_date)
+        value = Value(value=1.0, timestamp=timestamp)
+        values = []
+        values.append(value)
+        history = History(id=1, values=values)
         from_json = History.model_validate(json)
         self.assertEqual(history, from_json)
 
-    def test_invalid_extra_value(self):
-        current_date = datetime.now()
+    def test_valid_list(self):
+        timestamp = datetime.now()
         json = {
             "id": 1,
-            "value": 1.0,
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+                {
+                    "value": 2.0,
+                    "timestamp": (timestamp + timedelta(seconds=10)).isoformat(),
+                },
+            ],
+        }
+        value = Value(value=1.0, timestamp=timestamp)
+        values = []
+        values.append(value)
+        new_value = Value(value=2.0, timestamp=(timestamp + timedelta(seconds=10)))
+        values.append(new_value)
+        history = History(id=1, values=values)
+        from_json = History.model_validate(json)
+        self.assertEqual(history, from_json)
+
+    def test_invalid_empty(self):
+        json = {
+            "id": 1,
+            "values": [],
+        }
+        with pytest.raises(ValidationError):
+            _ = History.model_validate(json)
+
+    def test_invalid_extra_value(self):
+        timestamp = datetime.now()
+
+        json = {
+            "id": 1,
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
             "extra": "extra",
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_invalid_empty(self):
-        json = {}
-        with pytest.raises(ValidationError):
-            _ = History.model_validate(json)
-
     def test_id_string(self):
-        current_date = datetime.now()
+        timestamp = datetime.now()
         json = {
             "id": "Hello!",
-            "value": 1.0,
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
     def test_id_missing(self):
-        current_date = datetime.now()
+        timestamp = datetime.now()
         json = {
-            "value": 1.0,
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
     def test_value_missing(self):
-        current_date = datetime.now()
+        timestamp = datetime.now()
         json = {
             "id": 1,
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {"timestamp": timestamp.isoformat()},
+            ],
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
     def test_value_string(self):
-        current_date = datetime.now()
+        timestamp = datetime.now()
         json = {
             "id": 1,
-            "value": "string",
-            "timestamp": current_date.isoformat(),
+            "values": [
+                {
+                    "value": "string",
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
@@ -87,19 +140,42 @@ class HistoryModelTest(unittest.TestCase):
     def test_timestamp_missing(self):
         json = {
             "id": 1,
-            "value": 1.0,
+            "values": [
+                {
+                    "value": 1.0,
+                },
+            ],
         }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
     def test_timestamp_seconds(self):
-        current_date = datetime.now()
-        json = {"id": 1, "value": 1.0, "timestamp": current_date}
-        history = History(id=1, value=1.0, timestamp=current_date)
+        timestamp = datetime.now()
+        json = {
+            "id": 1,
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp,
+                },
+            ],
+        }
+        value = Value(value=1.0, timestamp=timestamp)
+        values = []
+        values.append(value)
+        history = History(id=1, values=values)
         from_json = History.model_validate(json)
         self.assertEqual(history, from_json)
 
     def test_timestamp_string(self):
-        json = {"id": 1, "value": 1.0, "timestamp": "string"}
+        json = {
+            "id": 1,
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": "string",
+                },
+            ],
+        }
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
