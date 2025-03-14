@@ -31,14 +31,14 @@ class History(BaseModel):
     id: int
     values: list[Value] = Field(min_length=1)
 
-    # @model_validator(mode="after")
-    # def check_unique_date_time(self):
-    #     timestamps = []
-    #     for value in self.values:
-    #         if value.timestamp in timestamps:
-    #             raise ValueError()
-    #         timestamps.append(value.timestamp)
-    #     return self
+    @model_validator(mode="after")
+    def check_unique_date_time(self):
+        timestamps = []
+        for value in self.values:
+            if value.timestamp in timestamps:
+                raise ValueError()
+            timestamps.append(value.timestamp)
+        return self
 
 
 #

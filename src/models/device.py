@@ -8,7 +8,8 @@
 # www.ai-ops.document360.io/docs/end-user-license-agreement
 ####################################################################################################
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
 
 from models.tags import Tag
 
@@ -18,7 +19,7 @@ class Device(BaseModel):
     id: int
     name: str
     description: str
-    tags: list[Tag] = []
+    tags: list[Tag] = Field(default=[])
 
     @field_validator("tags", mode="before")
     @classmethod

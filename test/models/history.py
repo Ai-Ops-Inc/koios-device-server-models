@@ -61,6 +61,24 @@ class HistoryModelTest(unittest.TestCase):
         from_json = History.model_validate(json)
         self.assertEqual(history, from_json)
 
+    def test_invalid_duplicate_timestamps(self):
+        timestamp = datetime.now()
+        json = {
+            "id": 1,
+            "values": [
+                {
+                    "value": 1.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+                {
+                    "value": 2.0,
+                    "timestamp": timestamp.isoformat(),
+                },
+            ],
+        }
+        with pytest.raises(ValidationError):
+            _ = History.model_validate(json)
+
     def test_invalid_empty(self):
         json = {
             "id": 1,
@@ -85,7 +103,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_id_string(self):
+    def test_invalid_id_string(self):
         timestamp = datetime.now()
         json = {
             "id": "Hello!",
@@ -99,7 +117,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_id_missing(self):
+    def test_invalid_id_missing(self):
         timestamp = datetime.now()
         json = {
             "values": [
@@ -112,7 +130,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_value_missing(self):
+    def test_invalid_value_missing(self):
         timestamp = datetime.now()
         json = {
             "id": 1,
@@ -123,7 +141,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_value_string(self):
+    def test_invalid_value_string(self):
         timestamp = datetime.now()
         json = {
             "id": 1,
@@ -137,7 +155,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_timestamp_missing(self):
+    def test_invalid_timestamp_missing(self):
         json = {
             "id": 1,
             "values": [
@@ -149,7 +167,7 @@ class HistoryModelTest(unittest.TestCase):
         with pytest.raises(ValidationError):
             _ = History.model_validate(json)
 
-    def test_timestamp_seconds(self):
+    def test_invalid_timestamp_seconds(self):
         timestamp = datetime.now()
         json = {
             "id": 1,
@@ -167,7 +185,7 @@ class HistoryModelTest(unittest.TestCase):
         from_json = History.model_validate(json)
         self.assertEqual(history, from_json)
 
-    def test_timestamp_string(self):
+    def test_invalid_timestamp_string(self):
         json = {
             "id": 1,
             "values": [
