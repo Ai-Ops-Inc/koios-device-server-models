@@ -17,7 +17,7 @@ from models.device import Device
 from models.tags import Tag
 
 
-class TagsModelTest(unittest.TestCase):
+class DeviceModelTest(unittest.TestCase):
 
     def test_valid_empty_tag_list(self):
         json = {
@@ -33,7 +33,7 @@ class TagsModelTest(unittest.TestCase):
         from_json = Device.model_validate(json)
         self.assertEqual(device, from_json)
 
-    def test_valid_tag(self):
+    def test_valid_device(self):
         json = {
             "id": 1,
             "name": "Valid Device",
@@ -70,7 +70,7 @@ class TagsModelTest(unittest.TestCase):
         from_json = Device.model_validate(json)
         self.assertEqual(device, from_json)
 
-    def test_valid_tag_list(self):
+    def test_valid_device_list(self):
         json = {
             "id": 1,
             "name": "Valid Device",
@@ -127,7 +127,7 @@ class TagsModelTest(unittest.TestCase):
         from_json = Device.model_validate(json)
         self.assertEqual(device, from_json)
 
-    def test_valid_tag_json_missing_device_id(self):
+    def test_valid_device_json_missing_device_id(self):
         json = {
             "id": 1,
             "name": "Valid Device",
@@ -163,7 +163,7 @@ class TagsModelTest(unittest.TestCase):
         from_json = Device.model_validate(json)
         self.assertEqual(device, from_json)
 
-    def test_valid_tag_list_json_missing_device_id(self):
+    def test_valid_device_list_json_missing_device_id(self):
         json = {
             "id": 1,
             "name": "Valid Device",
