@@ -1,4 +1,4 @@
-####################################################################################################
+#####################################################
 # Copyright © 2024 Ai-OPs, Inc.
 # All rights reserved.
 # The source code contained herein is protected by copyright law and international treaties.
@@ -7,9 +7,17 @@
 # www.ai-op.com
 # www.ai-ops.document360.io/docs/end-user-license-agreement
 ####################################################################################################
+from enum import Enum, StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+
+class ValueDataTypes(StrEnum):
+    STRING = "string"
+    FLOAT = "float"
+    INT = "int"
+    BOOL = "bool"
 
 
 class Tag(BaseModel):
@@ -22,7 +30,7 @@ class Tag(BaseModel):
     range_low: int | float | None = Field(default=None)
     range_high: int | float | None = Field(default=None)
     max_length: int | None = Field(default=None)
-    data_type: Literal["int", "float", "string", "bool"]
+    data_type: ValueDataTypes
 
     @model_validator(mode="after")
     def check_type(self):
@@ -38,12 +46,12 @@ class Tag(BaseModel):
     @model_validator(mode="after")
     def check_float(self):
         # Ensure both range_low and range_high are provided and validate the range
-        if self.data_type in ["int", "float"]:
+        if self.data_type in [ValueDataTypes.INT, ValueDataTypes.FLOAT]:
             if self.max_length is not None:
                 raise ValueError()
             if self.range_low is None or self.range_high is None:
                 raise ValueError()
-            if self.data_type == "int":
+            if self.data_type == ValueDataTypes.INT:
                 if not isinstance(self.range_low, int) or not isinstance(
                     self.range_high, int
                 ):
@@ -56,7 +64,7 @@ class Tag(BaseModel):
     @model_validator(mode="after")
     def check_string(self):
         # Ensure if a string then only max length is there.
-        if self.data_type == "string":
+        if self.data_type == ValueDataTypes.STRING:
             if self.range_low is not None or self.range_high is not None:
                 raise ValueError()
             if self.max_length is None or self.max_length <= 0:
@@ -66,7 +74,7 @@ class Tag(BaseModel):
     @model_validator(mode="after")
     def check_bool(self):
         # Ensure if Boolean then make sure the other types are not valid.
-        if self.data_type == "bool":
+        if self.data_type == ValueDataTypes.BOOL:
             if (
                 self.range_low is not None
                 or self.range_high is not None
