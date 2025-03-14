@@ -12,6 +12,6 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class DeviceGetRequest(BaseModel):
-    device_id: int | None = Field(default=None)
+    id: int | None = Field(default=None)
     skip: int = Field(default=0)
     limit: int = Field(default=10)
